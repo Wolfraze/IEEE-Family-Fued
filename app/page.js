@@ -1,57 +1,71 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 
 export default function Home() {
-  const [lanOrigin, setLanOrigin] = useState("");
-  const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState("");
+  const [hostUrl, setHostUrl] = useState("");
+  const [hostUrls, setHostUrls] = useState([]);
+  const [qr, setQr] = useState("");
 
   useEffect(() => {
     let active = true;
-    fetch("/api/network", { cache: "no-store" })
+    const showQr = (url) => {
+      setHostUrl(url);
+      QRCode.toDataURL(url, { width: 220, margin: 1, color: { dark: "#061327", light: "#ffffff" } })
+        .then((dataUrl) => { if (active) setQr(dataUrl); })
+        .catch((error) => console.error("Could not generate host QR code:", error));
+    };
+    fetch("/api/connection", { cache: "no-store" })
       .then((response) => {
-        if (!response.ok) throw new Error(`Network discovery failed (${response.status}).`);
+        if (!response.ok) throw new Error(`Could not find a connectable address (${response.status}).`);
         return response.json();
       })
-      .then(({ addresses: available, port }) => {
-        if (!active || !Array.isArray(available) || !available.length) return;
-        const currentHost = window.location.hostname;
-        const preferred = available.includes(currentHost) ? currentHost : available[0];
-        setAddresses(available);
-        setSelectedAddress(preferred);
-        setLanOrigin(`${window.location.protocol}//${preferred}:${port || window.location.port || 3000}`);
+      .then(({ hostUrl: connectUrl, hostUrls: addresses }) => {
+        if (!active) return;
+        const options = Array.isArray(addresses) ? addresses : [];
+        setHostUrls(options);
+        showQr(connectUrl || `${window.location.origin}/host`);
       })
       .catch((error) => {
-        if (active) console.error("Could not discover the server's LAN address:", error);
+        if (!active) return;
+        console.error("Could not generate the host connection QR code:", error);
+        showQr(`${window.location.origin}/host`);
       });
     return () => { active = false; };
   }, []);
 
-  const chooseAddress = (address) => {
-    setSelectedAddress(address);
-    setLanOrigin(`${window.location.protocol}//${address}:${window.location.port || 3000}`);
+  const chooseAddress = (url) => {
+    setHostUrl(url);
+    QRCode.toDataURL(url, { width: 220, margin: 1, color: { dark: "#061327", light: "#ffffff" } })
+      .then(setQr)
+      .catch((error) => console.error("Could not generate host QR code:", error));
   };
 
   return (
     <main className="home">
-      <span className="home-kicker">LOCAL NETWORK GAME</span>
+      <img className="home-logo" src="/ieee-logo.png" alt="IEEE SIES GST Student Branch logo" />
+      <span className="home-kicker">IEEE DAY SHOWDOWN</span>
       <h1>IEEE Family Feud</h1>
-      <p className="home-copy">Use these network links on the host and projector devices.</p>
-      <div className="home-network">
-        <span className="home-network-label">NETWORK ADDRESS</span>
-        {addresses.length > 1 ? (
-          <select aria-label="Choose network interface" value={selectedAddress} onChange={(event) => chooseAddress(event.target.value)}>
-            {addresses.map((address) => <option key={address} value={address}>{address}</option>)}
-          </select>
-        ) : (
-          <strong>{selectedAddress || "Finding network…"}</strong>
+      <p className="home-copy">Scan the QR code with the host phone, enter the private room code, and open the display on the projector.</p>
+      <nav className="home-links" aria-label="Game pages">
+        <a href="/host">OPEN HOST CONTROLLER</a>
+        <a href="/display" target="_blank" rel="noreferrer">OPEN PROJECTOR DISPLAY</a>
+      </nav>
+      <section className="host-qr">
+        <strong>SCAN TO OPEN THE HOST CONTROLLER</strong>
+        {qr ? <img src={qr} alt={`QR code for ${hostUrl}`} width="220" height="220" /> : <span>Generating QR code…</span>}
+        {hostUrl && <small>{hostUrl}</small>}
+        {hostUrls.length > 1 && (
+          <label className="home-network">
+            <span className="home-network-label">CHOOSE PHONE NETWORK</span>
+            <select value={hostUrl} onChange={(event) => chooseAddress(event.target.value)}>
+              {hostUrls.map((option) => (
+                <option key={option.hostUrl} value={option.hostUrl}>{option.label} · {option.address}</option>
+              ))}
+            </select>
+          </label>
         )}
-        <small>Both devices must be on the same Wi-Fi or local network.</small>
-      </div>
-      <a href={lanOrigin ? `${lanOrigin}/host` : "/host"}>OPEN HOST CONTROLLER</a>
-      <a href={lanOrigin ? `${lanOrigin}/display` : "/display"} target="_blank" rel="noreferrer">OPEN PROJECTOR DISPLAY</a>
-      <a className="home-setup" href={lanOrigin ? `${lanOrigin}/setup` : "/setup"}>SETUP GAME</a>
+      </section>
     </main>
   );
 }

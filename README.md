@@ -1,88 +1,124 @@
-# IEEE Family Feud — LAN game
+# IEEE Family Feud
 
-The host and projector display synchronize through a WebSocket served by this
-Node.js server. The server is the in-memory source of truth; no cloud service
-or internet connection is used for game state.
+A single Node.js web service runs the Next.js app, Express server, and WebSocket
+game state. Open the host controller on a phone or laptop and the display on a
+projector; both connect to the same public service.
 
 ## Requirements
 
 - Node.js 18 or newer
-- Both devices connected to the same reachable local network
+- A private `HOST_CODE` for controlling the game
 
-## Install and run
+## Run locally
 
-1. Install Node.js from [nodejs.org](https://nodejs.org/) if it is not already
-   installed.
-2. Open a terminal in the project folder and install dependencies:
-
-   ```sh
-   npm install
-   ```
-
-3. Start the server:
-
-   ```sh
-   node server.js
-   ```
-
-   For development with Next.js hot reload, use `npm run dev`. For an optimized
-   production run, build once with `npm run build`, then use `npm start`.
-4. The server binds to `0.0.0.0:3000` and prints the available LAN URLs. The
-   home page (`http://localhost:3000`) also discovers and displays the LAN
-   address by default, with direct Host and Display links. Select a network
-   interface if the computer has more than one. Open the **Host** link on the
-   controller device and the **Display** link on the projector device.
-
-The URLs look like:
-
-```text
-Display: http://192.168.1.25:3000/display
-Host:    http://192.168.1.25:3000/host
+```sh
+npm install
 ```
 
-Use the LAN address shown on the home page (or printed by the server) on both
-devices. `localhost` always means the device currently using the browser and
-will not reach the host computer from a second device.
+Copy `.env.example` to `.env`, set a private `HOST_CODE`, then start the service:
 
-## Game and connection behavior
+```sh
+npm run dev
+```
 
-- `/display` is read-only and supports multiple display clients.
-- `/host` is the controller. Only one host can control the game at a time; a
-  newly connected host takes over, and the previous controller is disconnected.
-- `/setup` uses the host role and takes over control while it is connected.
-- Game actions and setup changes are validated by the server, then immediately
-  broadcast to connected clients.
-- Reconnecting clients receive the current full state. The server keeps state
-  in memory, so restarting it resets the game to the initial questions/state.
-- The host has a **START INTRO** control. It restarts the intro on connected
-  display(s) while the game is ready.
+Open `http://localhost:3000`. The home page links to the host and display and
+creates a QR code locally in the browser for the host URL. For a production
+build, run `npm run build` followed by `npm start`; production startup requires
+`HOST_CODE`.
 
-## Troubleshooting
+The development server allows the machine's active IPv4 interface addresses as
+Next.js dev origins, so other devices on the same network can load the app
+without cross-origin warnings.
 
-- **Firewall prompt:** Allow Node.js to accept private/local network
-  connections. If prompted by Windows Defender Firewall or macOS, permit
-  incoming connections on the private network. Do not expose port 3000 to
-  public networks.
-- **Devices cannot connect:** Confirm both devices are on the same Wi-Fi/LAN,
-  use the server's printed IPv4 address, and check that TCP port 3000 is not
-  blocked.
-- **Guest Wi-Fi / campus network isolation:** Guest networks and some college
-  access points block device-to-device traffic (AP/client isolation). Try a
-  normal private Wi-Fi network or a phone hotspot with both devices connected.
-- **Host says another controller is connected:** Close the other `/host` or
-  `/setup` tab and wait a moment for its socket to close, then reconnect.
-- **Display is offline:** The page reconnects automatically with increasing
-  retry delays. Check the server terminal and firewall, then refresh if needed.
-- **Find the host page:** Use the Host URL printed by the server on the
-  controller device. The LAN sync indicator confirms when it is connected.
+## Deploy to Render
+
+**Security status:** the requested latest Next.js 14.2 patch (`14.2.35`) still
+has upstream advisories reported by `npm audit` (one critical Next.js finding
+and one high PostCSS finding). `npm audit fix` cannot resolve them without
+moving beyond the requested Next.js 14.2 line; npm only offers Next.js 16.3.8
+as an audit fix, which is a major-version upgrade. Keep this service private
+until you decide whether to accept that major upgrade or knowingly deploy with
+the reported risks.
+
+1. Push this repository to GitHub and create a Render **Web Service** from it
+   (or use the included `render.yaml` Blueprint).
+2. Use the configured build command `npm install && npm run build`, start
+   command `npm start`, and health check path `/health`.
+3. In the service environment, set `HOST_CODE` to a private room code. Never
+   put it in source control or print it on a public landing page.
+4. Set `ALLOWED_ORIGINS` to the service's exact public origin, for example
+   `https://ieee-family-feud.onrender.com`. For multiple trusted origins,
+   separate the origins with commas; do not include URL paths.
+5. Deploy. Share the service root URL or its host QR code with the controller;
+   open **OPEN PROJECTOR DISPLAY** on the projector. The host enters the
+   private room code on `/host`; it is stored only in that browser tab session.
+6. `PORT` is supplied by Render automatically. The included `STATE_FILE`
+   setting writes `state.json` under the service directory.
+
+The game state is debounced to an atomic `{ game, questions }` JSON file and
+restored when the service starts. **Render's free tier has an ephemeral disk
+and sleeps when idle**, so state can be lost during restarts/redeploys and the
+first request may be slow. For event safety, use a paid always-on instance and
+attach a persistent disk mounted at `/var/data`, then set `STATE_FILE` to
+`/var/data/state.json`. Confirm the disk is mounted and writable before the
+event.
+
+## Runtime and game behavior
+
+- `GET /health` returns HTTP 200 when the web service is ready.
+- `/display` is read-only and receives a redacted snapshot: unrevealed answer
+  text and aliases are never sent to display WebSocket clients.
+- `/host` and `/setup` require the private room code. The room code is the
+  host credential, not just a room locator: share it only with trusted
+  controllers. Only an authenticated host can take over the controller role;
+  five invalid attempts per IP are allowed in a 15-minute window.
+- The home page's QR opens `/host` directly. Locally, scanning from a page
+  opened on `localhost` points to the laptop's LAN address; on deployment it
+  points to the public service address. The QR never contains the room code.
+- `ALLOWED_ORIGINS` is an optional comma-separated allowlist for WebSocket
+  origins. The service also accepts same-origin WebSocket connections and
+  rejects other origins.
+- Setup supports a guided question/answer form and an advanced JSON editor.
+  Each question may use a ×1, ×2, or ×3 multiplier; omitted multipliers default
+  to ×1.
+- Display sound is generated with Web Audio after the operator selects
+  **Enable sound**. Sound and mute controls are only shown on `/display`.
+- Question order is saved in browser local storage under `feud_queue_v1`.
+  Each round has an independently shuffled unseen queue; shown questions stay
+  behind unseen questions in least-recently-shown order across game restarts.
+  In development, run `window.resetFeudQuestionHistory()` in the browser
+  console to clear history for testing.
+- State lives in memory while running and is persisted to `STATE_FILE` after
+  changes. Store that file on a persistent disk for durability across service
+  restarts.
+
+## Local fallback and pre-event checklist
+
+1. Set a private `HOST_CODE` and start the app on a laptop with `npm start` after
+   building (or `npm run dev` for a quick fallback).
+2. Connect the laptop and controller phone to a phone hotspot. Open the laptop's
+   LAN host URL on the phone and its display URL on the projector/browser.
+3. Test host controls on mobile data and verify the deployed room code works.
+4. Enable display sound on the projector device if desired.
+5. Put the projector display in full-screen mode (press **F** or double-click).
+6. Wake the hosted service at least **10 minutes before** the event, verify
+   `/health`, connect host and display, and test a reveal, strike, and award.
+7. Keep the local laptop/hotspot setup ready as the fallback if the public
+   service or venue network becomes unavailable.
 
 ## Project layout
 
-- `server.js` — Express HTTP server, Next.js page handler, WebSocket server,
-  LAN URL discovery, role lock, in-memory game state, validation, and broadcast.
-- `app/display/page.js` — read-only projector UI and intro animation.
-- `app/host/page.js` — controller interface and game actions.
-- `app/setup/page.js` — question/team setup editor.
-- `lib/realtime.js` — client WebSocket connection and exponential reconnect.
+- `server.js` — Express/Next HTTP server, WebSocket auth/roles, redacted
+  snapshots, validation, health check, and state persistence.
+- `app/display/page.js` — projector UI, snapshot-driven answer board, intro,
+  event overlays, and generated sound.
+- `app/host/page.js` — authenticated controller UI and game actions.
+- `app/setup/page.js` — authenticated team/question form and JSON editor.
+- `public/ieee-logo.png` — IEEE SIES GST Student Branch logo used across the
+  app outside the intro animation.
+- `lib/questionQueue.cjs` — persistent per-round shuffled question history.
+- `test/questionQueue.test.cjs` — question-cycle, reset, and storage edge-case tests.
+- `lib/realtime.js` — WebSocket connection, room-code exchange, and reconnect logic.
 - `lib/gameLogicCore.cjs` — shared reducer used by the browser bundle and server.
-- `data/questions.json` — default question set.
+- `lib/questionValidation.cjs` — shared setup validation rules.
+- `data/questions.json` — the 50-question set supplied for the event.

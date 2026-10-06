@@ -1,35 +1,1320 @@
 [
-  {
-    "id": 1,
-    "question": "Name something students carry to college",
-    "answers": [
-      { "answer": "Laptop", "points": 42, "aliases": ["laptop", "computer", "notebook computer"] },
-      { "answer": "Phone", "points": 31, "aliases": ["phone", "mobile", "mobile phone", "smartphone"] },
-      { "answer": "Notebook", "points": 15, "aliases": ["notebook", "books", "copy", "diary"] },
-      { "answer": "Water Bottle", "points": 8, "aliases": ["water bottle", "bottle", "water"] },
-      { "answer": "ID Card", "points": 4, "aliases": ["id", "id card", "identity card"] }
-    ]
-  },
-  {
-    "id": 2,
-    "question": "Name something students do during a boring lecture",
-    "answers": [
-      { "answer": "Check Phone", "points": 35, "aliases": ["phone", "check phone", "mobile", "scroll", "instagram"] },
-      { "answer": "Sleep", "points": 28, "aliases": ["sleep", "nap", "doze off"] },
-      { "answer": "Talk", "points": 17, "aliases": ["talk", "chat", "gossip", "whisper"] },
-      { "answer": "Doodle", "points": 12, "aliases": ["doodle", "draw", "sketch"] },
-      { "answer": "Daydream", "points": 8, "aliases": ["daydream", "dream", "think of something else"] }
-    ]
-  },
-  {
-    "id": 3,
-    "question": "Name a component found in almost every electronic circuit",
-    "answers": [
-      { "answer": "Resistor", "points": 40, "aliases": ["resistor", "resistance"] },
-      { "answer": "Capacitor", "points": 25, "aliases": ["capacitor", "cap"] },
-      { "answer": "Transistor", "points": 18, "aliases": ["transistor", "bjt", "mosfet"] },
-      { "answer": "Diode", "points": 10, "aliases": ["diode", "led"] },
-      { "answer": "Inductor", "points": 7, "aliases": ["inductor", "coil"] }
-    ]
-  }
+    {
+        "id":  1,
+        "question":  "Name a PokÃ©mon owned by Ash Ketchum.",
+        "answers":  [
+                        {
+                            "answer":  "Lapras",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Greninja",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Bulbasaur",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Pikachu",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Charizard",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  2,
+        "question":  "Name a country that has no coastline and is completely surrounded by land.",
+        "answers":  [
+                        {
+                            "answer":  "Nepal",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Switzerland",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Afghanistan",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Bhutan",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Austria",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  3,
+        "question":  "Name a sea creature that looks like a fish but is actually a mammal.",
+        "answers":  [
+                        {
+                            "answer":  "Whale",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Dolphin",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Seal",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Walrus",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Manatee",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  4,
+        "question":  "Name an alien that Ben transforms into using the Omnitrix.",
+        "answers":  [
+                        {
+                            "answer":  "Heatblast",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Four Arms",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "XLR8",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Diamondhead",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Grey Matter",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  5,
+        "question":  "Name a fruit or food that is a rich source of Vitamin C.",
+        "answers":  [
+                        {
+                            "answer":  "Orange",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Lemon",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Amla (Indian gooseberry)",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Guava",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Kiwi",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  6,
+        "question":  "Name a member of the Nohara family in Shinchan.",
+        "answers":  [
+                        {
+                            "answer":  "Misae, the mother",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Hiroshi, the father",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Himawari, the baby sister",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Shiro, the dog",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Shinnosuke (Shinchan) himself",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  7,
+        "question":  "Name an animal that is the national animal or bird of a country.",
+        "answers":  [
+                        {
+                            "answer":  "Tiger, India",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Bald Eagle, USA",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Kangaroo, Australia",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Lion, United Kingdom",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Giant Panda, China",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  8,
+        "question":  "Name a bird that cannot fly.",
+        "answers":  [
+                        {
+                            "answer":  "Penguin",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Ostrich",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Kiwi",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Emu",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Cassowary",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  9,
+        "question":  "Name something that Mr. Bean is always seen with.",
+        "answers":  [
+                        {
+                            "answer":  "Teddy, his teddy bear",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "His green Mini car",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "His briefcase",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "His cat, Scrapper",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "His tweed jacket and red tie",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  10,
+        "question":  "Name an animal that is known to sleep while standing up.",
+        "answers":  [
+                        {
+                            "answer":  "Horse",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Elephant",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Giraffe",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Flamingo",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Cow",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  11,
+        "question":  "Name an Indian city that is famous by a colour or a nickname.",
+        "answers":  [
+                        {
+                            "answer":  "Jaipur, the Pink City",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Jodhpur, the Blue City",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Udaipur, the City of Lakes",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Kochi, Queen of the Arabian Sea",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Hyderabad, the City of Pearls",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  12,
+        "question":  "Name a member of Team Rocket.",
+        "answers":  [
+                        {
+                            "answer":  "Jessie",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "James",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Meowth",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Giovanni",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Wobbuffet",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  13,
+        "question":  "Name a harvest festival celebrated in India.",
+        "answers":  [
+                        {
+                            "answer":  "Pongal",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Baisakhi",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Onam",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Makar Sankranti",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  14,
+        "question":  "Name a famous international sports tournament.",
+        "answers":  [
+                        {
+                            "answer":  "ICC Cricket World Cup",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "FIFA World Cup",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Wimbledon",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Olympic Games",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  15,
+        "question":  "Name a friend or classmate of Nobita who appears in almost every episode.",
+        "answers":  [
+                        {
+                            "answer":  "Shizuka",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Gian",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Suneo",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Dekisugi",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Doraemon himself",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  16,
+        "question":  "Name a classical dance form of India along with the state it comes from.",
+        "answers":  [
+                        {
+                            "answer":  "Kathakali, Kerala",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Bharatanatyam, Tamil Nadu",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Odissi, Odisha",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Manipuri, Manipur",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Kathak, Uttar Pradesh",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round1"
+    },
+    {
+        "id":  17,
+        "question":  "Name an Indian (or India-born) person who has won a Nobel Prize.",
+        "answers":  [
+                        {
+                            "answer":  "Rabindranath Tagore",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Mother Teresa",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "C.V. Raman",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Amartya Sen",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Kailash Satyarthi",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  18,
+        "question":  "Name a Saiyan character in Dragon Ball Z.",
+        "answers":  [
+                        {
+                            "answer":  "Goku",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Vegeta",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Gohan",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Trunks",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Goten",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  19,
+        "question":  "Name a game or idea that is believed to have originated in ancient India.",
+        "answers":  [
+                        {
+                            "answer":  "Chess",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Zero / decimal number system",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Snakes and Ladders",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Pachisi (Ludo)",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Yoga",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  20,
+        "question":  "Name a gadget that Doraemon pulls out of his four-dimensional pocket.",
+        "answers":  [
+                        {
+                            "answer":  "Anywhere Door",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Bamboo-copter",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Memory Bread",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Small Light",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Translation Jelly",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  21,
+        "question":  "Name a country that has a crescent moon on its national flag.",
+        "answers":  [
+                        {
+                            "answer":  "Turkey",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Pakistan",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Algeria",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Tunisia",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Malaysia",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  22,
+        "question":  "Name a typical object used in the slapstick fights between Oggy and the cockroaches.",
+        "answers":  [
+                        {
+                            "answer":  "Frying pan",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Hammer",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Bomb",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Mousetrap-style traps",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Rolling pin",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  23,
+        "question":  "Name a space mission launched by India\u0027s space agency, ISRO.",
+        "answers":  [
+                        {
+                            "answer":  "Chandrayaan",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Mangalyaan (Mars Orbiter Mission)",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Aditya-L1",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Gaganyaan",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Astrosat",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  24,
+        "question":  "Name something that Shinchan absolutely loves.",
+        "answers":  [
+                        {
+                            "answer":  "Chocobi snacks",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Action Kamen, his favourite hero",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Pretty older girls",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Dancing",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "His dog, Shiro",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  25,
+        "question":  "Name a country where the sun can be seen at midnight during summer.",
+        "answers":  [
+                        {
+                            "answer":  "Norway",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Iceland",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Sweden",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Finland",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Canada",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  26,
+        "question":  "Name an evolution of Eevee.",
+        "answers":  [
+                        {
+                            "answer":  "Vaporeon",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Jolteon",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Flareon",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Espeon",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Umbreon",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  27,
+        "question":  "Name a famous educational or research institution of India.",
+        "answers":  [
+                        {
+                            "answer":  "IIT",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "ISRO",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "AIIMS",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "IIM",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  28,
+        "question":  "Name an award given by the Government of India.",
+        "answers":  [
+                        {
+                            "answer":  "Bharat Ratna",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Padma Shri",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Padma Bhushan",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Arjuna Award",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  29,
+        "question":  "Name a main character in Ben 10 other than Ben himself.",
+        "answers":  [
+                        {
+                            "answer":  "Gwen",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Grandpa Max",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Kevin",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Vilgax",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Rook",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  30,
+        "question":  "Name a greenhouse gas responsible for global warming.",
+        "answers":  [
+                        {
+                            "answer":  "Carbon dioxide",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Methane",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Nitrous oxide",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Chlorofluorocarbons (CFCs)",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  31,
+        "question":  "Name an invention of the 20th century that changed daily life.",
+        "answers":  [
+                        {
+                            "answer":  "Computer",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Internet",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Aeroplane",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Mobile phone",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  32,
+        "question":  "Name an Indian woman who made history by being the first to achieve something.",
+        "answers":  [
+                        {
+                            "answer":  "Indira Gandhi, first woman Prime Minister",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Kalpana Chawla, first Indian-origin woman in space",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Pratibha Patil, first woman President",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Bachendri Pal, first Indian woman on Everest",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Kiran Bedi, first woman IPS officer",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round2"
+    },
+    {
+        "id":  33,
+        "question":  "Name a major villain Goku and his friends have fought.",
+        "answers":  [
+                        {
+                            "answer":  "Frieza",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Cell",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Majin Buu",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Raditz",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Nappa",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  34,
+        "question":  "Name a unit of measurement that is named after a scientist.",
+        "answers":  [
+                        {
+                            "answer":  "Newton",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Joule",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Watt",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Pascal",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Kelvin",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  35,
+        "question":  "Name a friend of Shinchan from Futaba Kindergarten.",
+        "answers":  [
+                        {
+                            "answer":  "Kazama",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Nene",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Masao",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Bo-chan",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Ai-chan",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  36,
+        "question":  "Name a scientific law or principle that is named after its discoverer.",
+        "answers":  [
+                        {
+                            "answer":  "Newton\u0027s Laws of Motion",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Ohm\u0027s Law",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Boyle\u0027s Law",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Archimedes\u0027 Principle",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  37,
+        "question":  "Name a famous energy attack from Dragon Ball Z.",
+        "answers":  [
+                        {
+                            "answer":  "Kamehameha",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Final Flash",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Spirit Bomb",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Galick Gun",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Special Beam Cannon",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  38,
+        "question":  "Name a major movement launched during India\u0027s struggle for independence.",
+        "answers":  [
+                        {
+                            "answer":  "Quit India Movement",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Non-Cooperation Movement",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Civil Disobedience (Salt March)",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Swadeshi Movement",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Khilafat Movement",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  39,
+        "question":  "Name a character from Kiteretsu.",
+        "answers":  [
+                        {
+                            "answer":  "Kiteretsu",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Korosuke",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Miyoko",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Butagorilla",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Tongari",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  40,
+        "question":  "Name a country that has more than one capital city.",
+        "answers":  [
+                        {
+                            "answer":  "South Africa",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Bolivia",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Netherlands",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Malaysia",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Sri Lanka",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  41,
+        "question":  "Name a character in Oggy\u0027s world other than Oggy and the cockroaches.",
+        "answers":  [
+                        {
+                            "answer":  "Bob, the bulldog",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Jack, Oggy\u0027s cousin",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Olivia, Oggy\u0027s girlfriend",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Neighbours and shopkeepers",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Policemen",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  42,
+        "question":  "Name an ancient or modern Indian mathematician.",
+        "answers":  [
+                        {
+                            "answer":  "Aryabhata",
+                            "points":  40
+                        },
+                        {
+                            "answer":  "Srinivasa Ramanujan",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Brahmagupta",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Bhaskaracharya",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  43,
+        "question":  "Name something that Hattori is famous for loving.",
+        "answers":  [
+                        {
+                            "answer":  "Chikuwa, the fish roll",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Helping Kenichi",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Saying \"Nin Nin\"",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Ninja training",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "His ninja dog friend, Shishimaru",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  44,
+        "question":  "Name a country that is located in two continents at the same time.",
+        "answers":  [
+                        {
+                            "answer":  "Russia",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Turkey",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Egypt",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Kazakhstan",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Azerbaijan",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "round3"
+    },
+    {
+        "id":  45,
+        "question":  "Name something Shinchan would do at a very serious wedding.",
+        "answers":  [
+                        {
+                            "answer":  "Dance with his bottom out",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Flirt with the older girls",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Eat all the snacks",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Act like Action Kamen",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Prank the guests",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    },
+    {
+        "id":  46,
+        "question":  "Name the first thing you would ask Doraemon\u0027s pocket for.",
+        "answers":  [
+                        {
+                            "answer":  "Anywhere Door",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Unlimited money",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Exam answers",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Time machine",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Endless food",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    },
+    {
+        "id":  47,
+        "question":  "Name something people do when the exam paper looks too hard.",
+        "answers":  [
+                        {
+                            "answer":  "Pray",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Guess the answers",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Peek at the neighbour",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Doodle on the paper",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Pretend to be sick",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    },
+    {
+        "id":  48,
+        "question":  "Name something people do while watching a cricket match.",
+        "answers":  [
+                        {
+                            "answer":  "Shout at the TV",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Eat snacks",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Give advice to the players",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "Argue with family",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Fall asleep",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    },
+    {
+        "id":  49,
+        "question":  "Name something you would shout while powering up like Goku.",
+        "answers":  [
+                        {
+                            "answer":  "Kamehameha!",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "Haaaaaaa!",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "Super Saiyan!",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "A loud scream",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "Strike a dramatic pose",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    },
+    {
+        "id":  50,
+        "question":  "Name something an Indian parent says when they see a bad report card.",
+        "answers":  [
+                        {
+                            "answer":  "Sharma ji\u0027s son did better",
+                            "points":  30
+                        },
+                        {
+                            "answer":  "What are these marks?",
+                            "points":  25
+                        },
+                        {
+                            "answer":  "You need to study more",
+                            "points":  20
+                        },
+                        {
+                            "answer":  "No phone for a week",
+                            "points":  15
+                        },
+                        {
+                            "answer":  "We will talk at home",
+                            "points":  10
+                        }
+                    ],
+        "pool":  "bonus"
+    }
 ]

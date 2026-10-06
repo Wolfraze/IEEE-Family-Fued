@@ -3,21 +3,93 @@ import { useEffect, useRef, useState } from "react";
 import { KEYS, getQuestions, useLocal, useSyncStatus } from "../../lib/storage";
 import { sendRealtime } from "../../lib/realtime";
 import { initialState } from "../../lib/gameLogic";
+import { createQuestionQueue, POOLS } from "../../lib/questionQueue.cjs";
+import AuthGate from "./AuthGate";
 
 export default function Host() {
+  return <AuthGate><HostConsole /></AuthGate>;
+}
+
+function HostConsole() {
   const [g] = useLocal(KEYS.game, initialState());
   const [qs] = useLocal(KEYS.q, getQuestions());
+  const [queueQuestions, setQueueQuestions] = useState([]);
   const [guess, setGuess] = useState("");
+  const [sendError, setSendError] = useState("");
   const [awardConfirmation, setAwardConfirmation] = useState(null);
   const { status: syncStatus, message: syncMessage } = useSyncStatus();
   const input = useRef(null);
+  const questionQueue = useRef(null);
+  if (!questionQueue.current) questionQueue.current = createQuestionQueue();
+  useEffect(() => {
+    const receiveQuestions = (event) => {
+      if (Array.isArray(event.detail?.questions)) setQueueQuestions(event.detail.questions);
+    };
+    window.addEventListener("feud-state-update", receiveQuestions);
+    return () => window.removeEventListener("feud-state-update", receiveQuestions);
+  }, []);
   useEffect(() => {
     if (!awardConfirmation) return;
     const timer = setTimeout(() => setAwardConfirmation(null), 1100);
     return () => clearTimeout(timer);
   }, [awardConfirmation]);
 
-  const go = (action) => sendRealtime({ type: "ACTION", action });
+  useEffect(() => {
+    const activeQuestion = queueQuestions[g.q];
+    if (g.phase === "play" && activeQuestion) {
+      questionQueue.current.showIfUnseen(queueQuestions, activeQuestion.id);
+    }
+  }, [g.q, g.phase, queueQuestions]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return undefined;
+    const resetQuestionHistory = () => questionQueue.current.resetHistory();
+    window.resetFeudQuestionHistory = resetQuestionHistory;
+    return () => {
+      if (window.resetFeudQuestionHistory === resetQuestionHistory) delete window.resetFeudQuestionHistory;
+    };
+  }, []);
+
+  const go = (action) => {
+    let nextAction = action;
+    if (action.type === "NEXT" || action.type === "NEXT_ROUND") {
+      if (!queueQuestions.length) {
+        setSendError("Waiting for the server question list. Try again when connected.");
+        return false;
+      }
+      const currentPool = queueQuestions[g.q]?.pool || POOLS[0];
+      const id = questionQueue.current.next(queueQuestions, currentPool);
+      const index = queueQuestions.findIndex((question) => String(question.id) === id);
+      if (index < 0) {
+        setSendError("No questions are available in the current question bank.");
+        return false;
+      }
+      nextAction = { type: "SELECT", i: index };
+    } else if (action.type === "SELECT") {
+      const question = queueQuestions[action.i];
+      if (!question || !questionQueue.current.show(queueQuestions, question.id)) {
+        setSendError("Could not add the selected question to question history.");
+        return false;
+      }
+    } else if (action.type === "PREV") {
+      const index = Math.max(0, g.q - 1);
+      const question = queueQuestions[index];
+      if (!question || !questionQueue.current.show(queueQuestions, question.id)) {
+        setSendError("Could not add the previous question to question history.");
+        return false;
+      }
+      nextAction = { type: "SELECT", i: index };
+    } else if (action.type === "RESTART") {
+      if (!queueQuestions.length) {
+        setSendError("Waiting for the server question list. Try again when connected.");
+        return false;
+      }
+      questionQueue.current.reshuffleUnseen(queueQuestions);
+    }
+    const sent = sendRealtime({ type: "ACTION", action: nextAction });
+    setSendError(sent ? "" : "Command was not sent. Check the connection and try again.");
+    return sent;
+  };
   const submit = () => { if (guess.trim() && go({ type: "GUESS", text: guess })) { setGuess(""); input.current?.focus(); } };
 
   useEffect(() => {
@@ -36,24 +108,30 @@ export default function Host() {
   });
 
   const q = qs[g.q];
+  const multiplier = q?.multiplier || 1;
   const name = (t) => (t === "A" ? g.teamA : g.teamB);
   const pendingAwardIndex = q?.answers.findIndex((_, i) => g.revealed[i] && !g.awarded?.[i]) ?? -1;
   const awardTo = (t) => {
     if (pendingAwardIndex < 0 || !q) return;
     const answer = q.answers[pendingAwardIndex];
     if (go({ type: "AWARD_ANSWER", i: pendingAwardIndex, t })) {
-      setAwardConfirmation({ team: t, points: answer.points, answer: answer.answer });
+      setAwardConfirmation({ team: t, points: answer.points * multiplier, answer: answer.answer });
     }
   };
   return (
     <main className="host host-console">
       <header className="console-header">
-        <a className="console-brand" href="/"><span className="brand-emblem">IEEE</span><span><strong>IEEE FAMILY FEUD</strong><small>LIVE HOST CONSOLE</small></span></a>
-        <div className="console-links"><span className={"network-status " + syncStatus} role="status" title={syncMessage}>{syncStatus === "online" ? "LAN SYNC · LIVE" : syncStatus === "offline" ? "LAN SYNC · OFFLINE" : "CONNECTING…"}</span>{syncMessage && <span className="sync-feedback" role="alert">{syncMessage}</span>}<button disabled={g.phase !== "ready"} onClick={() => sendRealtime({ type: "START_INTRO" })}>START INTRO</button><button onClick={() => window.open("/display", "feud-display")}>OPEN PROJECTOR <kbd>F</kbd></button><a href="/setup">SETUP</a></div>
+        <a className="console-brand" href="/"><img className="brand-emblem" src="/ieee-logo.png" alt="IEEE SIES GST Student Branch logo" /><span><strong>IEEE FAMILY FEUD</strong><small>LIVE HOST CONSOLE</small></span></a>
+        <div className="console-links"><span className={"network-status " + syncStatus} role="status" title={syncMessage}>{syncStatus === "online" ? "LIVE" : syncStatus === "offline" ? "OFFLINE" : "CONNECTING"}</span><button disabled={g.phase !== "ready"} onClick={() => sendRealtime({ type: "START_INTRO" })}>START INTRO</button><button onClick={() => window.open("/display", "feud-display")}>OPEN PROJECTOR <kbd>F</kbd></button><a href="/setup">SETUP</a></div>
       </header>
+      {(syncStatus !== "online" || syncMessage || sendError) && (
+        <div className={"connection-banner " + (syncStatus === "offline" ? "is-offline" : "")} role="alert">
+          {sendError || syncMessage || (syncStatus === "offline" ? "Offline — controls will not reach the display." : "Connecting to the game server…")}
+        </div>
+      )}
 
       <section className="console-panel current-panel">
-        <div className="section-heading"><div><span className="eyebrow">ROUND {g.q >= 0 ? String(g.q + 1).padStart(2, "0") : "--"}</span><h2>CURRENT QUESTION</h2></div><span className={"status-chip " + (g.phase === "play" ? "is-live" : "")}>{g.phase === "play" ? "LIVE" : "READY"}</span></div>
+        <div className="section-heading"><div><span className="eyebrow">ROUND {g.q >= 0 ? String(g.q + 1).padStart(2, "0") : "--"}</span><h2>CURRENT QUESTION</h2></div><span className={"status-chip " + (g.phase === "play" ? "is-live" : "")}>{g.phase === "play" ? "LIVE" : "READY"} · ×{multiplier}</span></div>
         <h3 className="q">{q ? q.question : "No question selected"}</h3>
         <div className="row question-nav">
           <select aria-label="Select a question" value={g.q} onChange={(e) => go({ type: "SELECT", i: +e.target.value })}>
@@ -72,7 +150,7 @@ export default function Host() {
             <div key={i} className={"ans " + (g.revealed[i] ? "done" : "")}>
               <b>{String(i + 1).padStart(2, "0")}</b>
               <span className="answer-label">{a.answer}{g.awarded?.[i] && <small>AWARDED → {name(g.awarded[i])}</small>}</span>
-              <em>{a.points} <small>PTS</small></em>
+              <em>{a.points * multiplier} <small>PTS</small></em>
               <button disabled={g.revealed[i]} onClick={() => go({ type: "REVEAL", i })}>{g.revealed[i] ? "REVEALED" : "REVEAL"}</button>
             </div>
           ))}
@@ -92,7 +170,9 @@ export default function Host() {
           <section className="console-panel controls-panel">
             <div className="section-heading"><div><span className="eyebrow">LIVE EVENT</span><h2>GAME CONTROLS</h2></div></div>
             <div className="control-grid">
-              <button className="bad big" onClick={() => go({ type: "STRIKE" })}>STRIKE <kbd>S</kbd></button>
+              <button className="bad big buzzer-button" disabled={g.phase !== "play"} aria-label="Buzzer: mark the answer wrong" onClick={() => go({ type: "STRIKE" })}>
+                BUZZER <span>WRONG ANSWER</span> <kbd>S</kbd>
+              </button>
               <button className="gold" disabled={g.strikes < 3 || g.steal} onClick={() => go({ type: "STEAL" })}>STEAL CHANCE</button>
               <button onClick={() => go({ type: "UNSTRIKE" })}>REMOVE STRIKE</button>
               <span className="pill">STRIKES <b>{g.strikes}/3</b></span>
@@ -129,7 +209,7 @@ export default function Host() {
             <span className="eyebrow">ANSWER REVEALED · #{pendingAwardIndex + 1}</span>
             <h2 id="award-title">ANSWER REVEALED</h2>
             <div className="award-answer">{q.answers[pendingAwardIndex].answer}</div>
-            <div className="award-points">+{q.answers[pendingAwardIndex].points}</div>
+            <div className="award-points">+{q.answers[pendingAwardIndex].points * multiplier}</div>
             <p>WHO GETS THE POINTS?</p>
             <div className="award-team-buttons">
               {["A", "B"].map((t) => <button key={t} onClick={() => awardTo(t)}>{name(t)}</button>)}

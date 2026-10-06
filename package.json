@@ -7,8 +7,10 @@
     "start": "node server.js --production"
   },
   "dependencies": {
+    "dotenv": "^18.0.5",
     "express": "^4.21.2",
-    "next": "14.2.15",
+    "next": "14.2.35",
+    "qrcode": "^1.5.4",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "ws": "^8.18.0"

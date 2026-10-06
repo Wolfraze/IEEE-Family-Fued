@@ -1,7 +1,33 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { KEYS, getQuestions, useLocal, useSyncStatus } from "../../lib/storage";
+import { connectRealtime, subscribeRealtimeStatus } from "../../lib/realtime";
 import { initialState } from "../../lib/gameLogic";
+
+function useDisplaySync() {
+  const [game, setGame] = useState(initialState());
+  const [sync, setSync] = useState({ status: "syncing", message: "" });
+  useEffect(() => {
+    try {
+      const cached = window.localStorage.getItem("feud-game");
+      if (cached) setGame(JSON.parse(cached));
+    } catch {
+      setGame(initialState());
+    }
+    const receiveState = (event) => {
+      if (event.detail?.game) setGame(event.detail.game);
+    };
+    const updateStatus = (status, message) => setSync({ status, message });
+    window.addEventListener("feud-state-update", receiveState);
+    const unsubscribe = subscribeRealtimeStatus(updateStatus);
+    const disconnect = connectRealtime("display");
+    return () => {
+      window.removeEventListener("feud-state-update", receiveState);
+      unsubscribe();
+      disconnect();
+    };
+  }, []);
+  return { game, ...sync };
+}
 
 function Score({ v }) {
   const [shown, setShown] = useState(v);
@@ -26,13 +52,15 @@ function Score({ v }) {
   return <b className="score-count">{shown}</b>;
 }
 
-function GameIntro({ introId }) {
+function GameIntro({ introId, onIntroSound }) {
   const canvasRef = useRef(null);
   const flashRef = useRef(null);
   const startIntroRef = useRef(() => {});
   const replayIntroRef = useRef(() => {});
   const [mode, setMode] = useState("idle");
   const modeRef = useRef("idle");
+  const onIntroSoundRef = useRef(onIntroSound);
+  onIntroSoundRef.current = onIntroSound;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -83,10 +111,12 @@ function GameIntro({ introId }) {
     const launch = () => {
       if (modeRef.current !== "idle") return;
       window.clearTimeout(autoStartTimer);
+      onIntroSoundRef.current();
       setIntroMode(reducedMotion.matches ? "title" : "warp");
     };
     const replay = () => {
       window.clearTimeout(autoStartTimer);
+      onIntroSoundRef.current();
       setIntroMode("idle");
       launch();
     };
@@ -273,12 +303,80 @@ function GameIntro({ introId }) {
 }
 
 export default function Display() {
-  const [g] = useLocal(KEYS.game, initialState());
-  const [qs] = useLocal(KEYS.q, getQuestions());
-  const { status: syncStatus, message: syncMessage } = useSyncStatus();
+  const { game: g, status: syncStatus, message: syncMessage } = useDisplaySync();
+  const [board, setBoard] = useState({ currentQuestion: null, answers: [], answerCount: 0, multiplier: 1 });
   const [ov, setOv] = useState(null);
-  const seen = useRef(null), timer = useRef(null);
+  const seen = useRef(new Set()), timer = useRef(null);
   const queue = useRef([]), playing = useRef(false), advance = useRef(null);
+  const audio = useRef(null);
+  const [soundEnabled, setSoundEnabled] = useState(false), [muted, setMuted] = useState(false);
+  const [soundError, setSoundError] = useState("");
+  const soundSettings = useRef({ enabled: false, muted: false });
+  soundSettings.current = { enabled: soundEnabled, muted };
+
+  const playSound = (kind) => {
+    const context = audio.current;
+    if (!soundSettings.current.enabled || soundSettings.current.muted || !context) return;
+    const tone = (frequency, start, duration, type = "sine", endFrequency = frequency, volume = 0.12) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), start + duration);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration);
+    };
+    const now = context.currentTime;
+    if (kind === "correct") {
+      tone(740, now, 0.22); tone(988, now + 0.09, 0.3);
+    } else if (kind === "strike") {
+      const duration = 1.1;
+      const osc1 = context.createOscillator();
+      const osc2 = context.createOscillator();
+      const gain = context.createGain();
+      const compressor = context.createDynamicsCompressor();
+      osc1.type = "sawtooth";
+      osc2.type = "square";
+      osc1.frequency.setValueAtTime(130, now);
+      osc2.frequency.setValueAtTime(137, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(1, now + 0.02);
+      gain.gain.setValueAtTime(1, now + duration - 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      compressor.threshold.value = -20;
+      compressor.ratio.value = 12;
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(compressor).connect(context.destination);
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + duration);
+      osc2.stop(now + duration);
+    } else if (kind === "award") {
+      [659, 784, 988].forEach((frequency, index) => tone(frequency, now + index * 0.08, 0.36));
+      tone(523, now + 0.2, 0.6, "triangle", 784, 0.07);
+    } else if (kind === "intro") {
+      tone(90, now, 1.1, "sawtooth", 520, 0.12);
+      [392, 523, 659, 784].forEach((frequency, index) => tone(frequency, now + 0.85 + index * 0.13, 0.65, "triangle", frequency, 0.09));
+    }
+  };
+  const enableSound = async () => {
+    try {
+      const AudioContextClass = window.AudioContext;
+      if (!AudioContextClass) throw new Error("Web Audio is not supported by this browser.");
+      audio.current ||= new AudioContextClass();
+      await audio.current.resume();
+      setSoundEnabled(true);
+      setMuted(false);
+      setSoundError("");
+    } catch (error) {
+      setSoundError(`Sound could not be enabled: ${error.message}`);
+    }
+  };
 
   useEffect(() => {
     advance.current = () => {
@@ -295,14 +393,38 @@ export default function Display() {
     };
   }, []);
   useEffect(() => {
-    const e = g.event;
-    if (!e || e.id === seen.current) return;
-    seen.current = e.id;
-    if (Date.now() - Math.floor(e.id) > 3000 || !["correct", "strike", "steal", "award"].includes(e.type)) return;
-    queue.current.push(e);
-    advance.current?.();
-  }, [g]);
-  useEffect(() => () => clearTimeout(timer.current), []);
+    const receive = (event) => {
+      const snapshot = event.detail;
+      setBoard({
+        currentQuestion: snapshot.currentQuestion,
+        answers: snapshot.answers || [],
+        answerCount: snapshot.answerCount || 0,
+        multiplier: snapshot.multiplier || 1,
+      });
+      const currentEvent = snapshot.game?.event;
+      if (!currentEvent || !currentEvent.id) return;
+      if (snapshot.initialSnapshot) {
+        seen.current.add(currentEvent.id);
+        return;
+      }
+      if (seen.current.has(currentEvent.id)) return;
+      seen.current.add(currentEvent.id);
+      if (seen.current.size > 100) seen.current.delete(seen.current.values().next().value);
+      if (snapshot.game?.phase !== "play") return;
+      if (!["correct", "strike", "steal", "award"].includes(currentEvent.type)) return;
+      queue.current.push(currentEvent);
+      playSound(currentEvent.type);
+      advance.current?.();
+    };
+    window.addEventListener("feud-state-update", receive);
+    return () => window.removeEventListener("feud-state-update", receive);
+  }, []);
+  useEffect(() => {
+    return () => {
+      clearTimeout(timer.current);
+      audio.current?.close();
+    };
+  }, []);
   useEffect(() => {
     const fs = () => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
     const k = (e) => e.key.toLowerCase() === "f" && fs();
@@ -310,24 +432,30 @@ export default function Display() {
     return () => { window.removeEventListener("keydown", k); window.removeEventListener("dblclick", fs); };
   }, []);
 
-  const q = qs[g.q];
+  const q = board.currentQuestion;
   const winner = g.scoreA === g.scoreB ? "IT'S A TIE!" : g.scoreA > g.scoreB ? g.teamA : g.teamB;
   const turnName = g.turn === "A" ? g.teamA : g.teamB;
-  const roundNumber = String(g.q + 1).padStart(2, "0");
+  const roundNumber = String((q?.index ?? g.q) + 1).padStart(2, "0");
 
   return (
     <div className="screen"><div className={"stage " + (g.phase === "ready" ? "intro-stage" : "")}>
       <div className="stage-lights" aria-hidden="true" />
-      {g.phase === "ready" && <GameIntro introId={g.introId || 0} />}
+      {g.phase === "ready" && <GameIntro introId={g.introId || 0} onIntroSound={() => playSound("intro")} />}
+      <div className="display-audio-controls">
+        {!soundEnabled ? <button type="button" onClick={enableSound}>Enable sound</button> : (
+          <button type="button" aria-pressed={!muted} onClick={() => setMuted((value) => !value)}>{muted ? "Unmute sound" : "Mute sound"}</button>
+        )}
+        {soundError && <span role="alert">{soundError}</span>}
+      </div>
       <div className={"display-sync-status " + syncStatus} role="status" title={syncMessage}>
         <i aria-hidden="true" />
-        {syncStatus === "online" ? "LAN CONNECTED" : syncStatus === "offline" ? "LAN OFFLINE" : "CONNECTING"}
+        {syncStatus === "online" ? "LIVE" : syncStatus === "offline" ? "OFFLINE" : "CONNECTING"}
       </div>
 
       {g.phase === "final" && (
         <div className="center final">
           {Array.from({ length: 36 }, (_, i) => <i key={i} className="conf" style={{ left: (i * 2.8) % 100 + "%", animationDelay: (i % 9) * 0.25 + "s", background: ["#ffc72c", "#3fd0ff", "#fff", "#ff3b4e"][i % 4] }} />)}
-          <div className="brand-mark">IEEE DAY <span>CHAMPIONSHIP</span></div><h1 className="logo sm">IEEE FAMILY FEUD</h1><h2>FINAL SCORE</h2>
+          <div className="final-brand"><img src="/ieee-logo.png" alt="IEEE SIES GST Student Branch logo" /><span>IEEE DAY<br />CHAMPIONSHIP</span></div><h1 className="logo sm">IEEE FAMILY FEUD</h1><h2>FINAL SCORE</h2>
           <div className="finalrow">
             <div><span>{g.teamA}</span><Score v={g.scoreA} /></div><div><span>{g.teamB}</span><Score v={g.scoreB} /></div>
           </div>
@@ -337,17 +465,17 @@ export default function Display() {
 
       {g.phase === "play" && q && (<>
         <header className="show-header">
-          <div className="brand-lockup"><span className="brand-emblem">IEEE</span><div><h1>IEEE FAMILY FEUD</h1><p>IEEE DAY SHOWDOWN</p></div></div>
-          <div className="round-label">ROUND <b>{roundNumber}</b></div>
+          <div className="brand-lockup"><img className="brand-emblem" src="/ieee-logo.png" alt="IEEE SIES GST Student Branch logo" /><div><h1>IEEE FAMILY FEUD</h1><p>IEEE DAY SHOWDOWN</p></div></div>
+          <div className="round-label">ROUND <b>{roundNumber}</b> · ×{board.multiplier}</div>
           <div className="live-indicator"><i /> ON AIR</div>
         </header>
         <div className="game-content">
-          <h2 key={g.q + "-" + g.event?.type} className={"question " + (g.event?.type === "question" ? "enter" : "")}>{q.question}</h2>
-          <div className={"board " + (g.event?.type === "question" ? "board-enter" : "") + (q.answers.length > 6 ? " board-wide" : "")} style={{ "--answer-count": q.answers.length }}>
-            {q.answers.map((a, i) => (
-              <div key={i} className={"card " + (g.revealed[i] ? "flip" : "")} style={{ "--slot-index": i }}><div className="in">
+          <h2 key={q.index + "-" + g.event?.type} className={"question " + (g.event?.type === "question" ? "enter" : "")}>{q.question}</h2>
+          <div className={"board " + (g.event?.type === "question" ? "board-enter" : "") + (board.answerCount > 6 ? " board-wide" : "")} style={{ "--answer-count": board.answerCount }}>
+            {board.answers.map((a, i) => (
+              <div key={i} className={"card " + (a.revealed ? "flip" : "")} style={{ "--slot-index": i }}><div className="in">
                 <div className="f front"><span className="n">{i + 1}</span><span className="hidden-label">MYSTERY ANSWER</span><span className="concealed-mark">?</span></div>
-                <div className="f back"><span className="t">{a.answer}</span><span className="p">{a.points}</span></div>
+                <div className="f back"><span className="t">{a.revealed ? a.text : ""}</span><span className="p">{a.revealed ? a.points : ""}</span></div>
               </div></div>
             ))}
           </div>
@@ -355,9 +483,8 @@ export default function Display() {
         <footer className="show-footer">
           <div className={"tm " + (g.turn === "A" ? "on" : "")}><span className="team-label">TEAM A</span><span className="team-name">{g.teamA}</span><Score v={g.scoreA} /></div>
           <div className="footer-center">
-            <div className="turn">{g.steal ? "STEAL CHANCE" : "PLAYING"} <b>{turnName}</b></div>
+            {g.steal && <div className="turn">STEAL CHANCE</div>}
             <div className="pot"><span>ROUND POT</span><Score v={g.pot} /></div>
-            <div className="xs" aria-label={`${g.strikes} strikes`}>{[0, 1, 2].map((i) => <span key={i} className={i < g.strikes ? "x on" : "x"}>✕</span>)}</div>
           </div>
           <div className={"tm " + (g.turn === "B" ? "on" : "")}><span className="team-label">TEAM B</span><span className="team-name">{g.teamB}</span><Score v={g.scoreB} /></div>
         </footer>
