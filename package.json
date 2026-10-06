@@ -1,0 +1,16 @@
+{
+  "name": "ieee-family-feud",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js --dev",
+    "build": "next build",
+    "start": "node server.js --production"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "ws": "^8.18.0"
+  }
+}

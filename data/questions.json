@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "question": "Name something students carry to college",
+    "answers": [
+      { "answer": "Laptop", "points": 42, "aliases": ["laptop", "computer", "notebook computer"] },
+      { "answer": "Phone", "points": 31, "aliases": ["phone", "mobile", "mobile phone", "smartphone"] },
+      { "answer": "Notebook", "points": 15, "aliases": ["notebook", "books", "copy", "diary"] },
+      { "answer": "Water Bottle", "points": 8, "aliases": ["water bottle", "bottle", "water"] },
+      { "answer": "ID Card", "points": 4, "aliases": ["id", "id card", "identity card"] }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Name something students do during a boring lecture",
+    "answers": [
+      { "answer": "Check Phone", "points": 35, "aliases": ["phone", "check phone", "mobile", "scroll", "instagram"] },
+      { "answer": "Sleep", "points": 28, "aliases": ["sleep", "nap", "doze off"] },
+      { "answer": "Talk", "points": 17, "aliases": ["talk", "chat", "gossip", "whisper"] },
+      { "answer": "Doodle", "points": 12, "aliases": ["doodle", "draw", "sketch"] },
+      { "answer": "Daydream", "points": 8, "aliases": ["daydream", "dream", "think of something else"] }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "Name a component found in almost every electronic circuit",
+    "answers": [
+      { "answer": "Resistor", "points": 40, "aliases": ["resistor", "resistance"] },
+      { "answer": "Capacitor", "points": 25, "aliases": ["capacitor", "cap"] },
+      { "answer": "Transistor", "points": 18, "aliases": ["transistor", "bjt", "mosfet"] },
+      { "answer": "Diode", "points": 10, "aliases": ["diode", "led"] },
+      { "answer": "Inductor", "points": 7, "aliases": ["inductor", "coil"] }
+    ]
+  }
+]
